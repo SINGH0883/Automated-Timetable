@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  password     String
+  name         String
+  role         String    // "admin", "teacher", "student"
+  departmentId Int?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  teacher      Teacher?
+  student      Student?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Department {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  code     String  @unique
+  users    User[]
+  courses  Course[]
+  teachers Teacher[]
+  students Student[]
+  blocks   Block[]
+  timetableEntries TimetableEntry[]
+}
+
+model Teacher {
+  id           Int     @id @default(autoincrement())
+  userId       Int     @unique
+  user         User    @relation(fields: [userId], references: [id])
+  employeeId   String  @unique
+  specialization String
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  maxHoursPerDay Int   @default(4)
+  timetableEntries TimetableEntry[]
+}
+
+model Student {
+  id           Int     @id @default(autoincrement())
+  userId       Int     @unique
+  user         User    @relation(fields: [userId], references: [id])
+  enrollmentNo String  @unique
+  year         Int
+  section      String
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  offDays      OffDay[]
+}
+
+model Block {
+  id       Int     @id @default(autoincrement())
+  name     String
+  code     String
+  departmentId Int?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  rooms    Room[]
+}
+
+model Room {
+  id         Int    @id @default(autoincrement())
+  blockId    Int
+  block      Block  @relation(fields: [blockId], references: [id])
+  roomNumber String
+  capacity   Int    @default(60)
+  timetableEntries TimetableEntry[]
+}
+
+model Course {
+  id           Int     @id @default(autoincrement())
+  name         String
+  code         String  @unique
+  credits      Int     @default(4)
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+  timetableEntries TimetableEntry[]
+}
+
+model TimeSlot {
+  id        Int    @id @default(autoincrement())
+  day       String // "Monday", "Tuesday", etc.
+  startTime String
+  endTime   String
+  entries   TimetableEntry[]
+}
+
+model TimetableEntry {
+  id          Int      @id @default(autoincrement())
+  courseId    Int
+  course      Course   @relation(fields: [courseId], references: [id])
+  teacherId   Int
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+  roomId      Int
+  room        Room     @relation(fields: [roomId], references: [id])
+  timeSlotId  Int
+  timeSlot    TimeSlot @relation(fields: [timeSlotId], references: [id])
+  departmentId Int
+  department  Department @relation(fields: [departmentId], references: [id])
+  year        Int
+  section     String
+  weekNumber  Int      @default(1)
+  createdAt   DateTime @default(now())
+}
+
+model OffDay {
+  id        Int    @id @default(autoincrement())
+  studentId Int
+  student   Student @relation(fields: [studentId], references: [id])
+  day       String // "Saturday", "Sunday"
+}

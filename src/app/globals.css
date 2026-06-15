@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gu-blue: #1a237e;
+  --color-gu-red: #c62828;
+  --color-gu-gold: #ffd700;
+  --color-gu-light: #f5f5f5;
+  --color-gu-dark: #212121;
+}
+
+@layer utilities {
+  .bg-gu-gradient {
+    background: linear-gradient(135deg, #1a237e 0%, #c62828 50%, #1a237e 100%);
+  }
+  .bg-gu-gradient-horizontal {
+    background: linear-gradient(90deg, #1a237e 0%, #c62828 100%);
+  }
+  .text-gu-gradient {
+    background: linear-gradient(135deg, #1a237e 0%, #c62828 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .shadow-gu {
+    box-shadow: 0 4px 14px 0 rgba(26, 35, 126, 0.25);
+  }
+  .shadow-gu-lg {
+    box-shadow: 0 8px 30px 0 rgba(26, 35, 126, 0.3);
+  }
+  .border-gu {
+    border-color: #1a237e;
+  }
+  .focus-ring-gu {
+    @apply focus:outline-none focus:ring-2 focus:ring-gu-blue focus:ring-offset-2;
+  }
+}
